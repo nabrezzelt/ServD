@@ -53,35 +53,34 @@ namespace Alerts
             grayOutPanel = null;
         }
 
-        public void Show(string alertText, Color alertColor, int milisecondsToShow = 1500)
+        public void Show(string alertText, Color alertColor, bool blockForm = true, int milisecondsToShow = 1500)
         {
             max_length = milisecondsToShow / 10;
-
-            // take a screenshot of the form and darken it:
-            Bitmap bmp = new Bitmap(form.ClientRectangle.Width, form.ClientRectangle.Height);
-            using (Graphics G = Graphics.FromImage(bmp))
-            {
-                G.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
-                G.CopyFromScreen(form.PointToScreen(new Point(0, 0)), new Point(0, 0), form.ClientRectangle.Size);
-                double percent = 0.60;
-                Color darken = Color.FromArgb((int)(255 * percent), Color.Black);
-                using (Brush brsh = new SolidBrush(darken))
-                {
-                    G.FillRectangle(brsh, form.ClientRectangle);
-                }
-            }
-
+            
             // put the darkened screenshot into a Panel and bring it to the front:
             grayOutPanel = new Panel();
-            
-            grayOutPanel.Location = new Point(0, 0);
-            grayOutPanel.Size = form.ClientRectangle.Size;
-            grayOutPanel.BackgroundImage = bmp;                        
-
             Panel alertPanel = new Panel();
-            alertPanel.BackColor = alertColor;
-            alertPanel.Location = new Point(PADDING_LEFT, PADDING_TOP);
-            alertPanel.Size = new Size(form.Width - PADDING_LEFT - PADDING_RIGHT, HEIGHT);
+
+            if (blockForm)
+            {
+                grayOutPanel.Location = new Point(0, 0);
+                grayOutPanel.Size = form.ClientRectangle.Size;
+
+                alertPanel.Location = new Point(PADDING_LEFT, PADDING_TOP);
+                alertPanel.Size = new Size(form.Width - PADDING_LEFT - PADDING_RIGHT, HEIGHT);
+            }
+            else
+            {
+                grayOutPanel.Location = new Point(PADDING_LEFT, PADDING_TOP);
+                grayOutPanel.Size = new Size(form.Width - PADDING_LEFT - PADDING_RIGHT, HEIGHT);
+
+                alertPanel.Location = new Point(0);
+                alertPanel.Size = new Size(grayOutPanel.Width, grayOutPanel.Height);
+            }
+            
+            grayOutPanel.BackgroundImage = TakeScreenshot();                  
+            
+            alertPanel.BackColor = alertColor;            
 
             Label lbl_alertText = new Label();
             lbl_alertText.Text = alertText;
@@ -97,6 +96,24 @@ namespace Alerts
             grayOutPanel.BringToFront();
 
             tmr.Start();
+        }
+
+        private Bitmap TakeScreenshot(double darkenPercent = 0.60)
+        {
+            Bitmap bmp = new Bitmap(form.ClientRectangle.Width, form.ClientRectangle.Height);
+            using (Graphics G = Graphics.FromImage(bmp))
+            {
+                G.CompositingMode = System.Drawing.Drawing2D.CompositingMode.SourceOver;
+                G.CopyFromScreen(form.PointToScreen(new Point(0, 0)), new Point(0, 0), form.ClientRectangle.Size);
+                
+                Color darken = Color.FromArgb((int)(255 * darkenPercent), Color.Black);
+                using (Brush brsh = new SolidBrush(darken))
+                {
+                    G.FillRectangle(brsh, form.ClientRectangle);
+                }
+            }
+
+            return bmp;
         }
     }
 }
