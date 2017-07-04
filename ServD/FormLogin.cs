@@ -29,7 +29,18 @@ namespace ServD
         private void btn_login_Click(object sender, EventArgs e)
         {
             AlertForm alert = new AlertForm(this);
-            alert.Show("Login failed!", AlertForm.COLOR_WARNING);
+
+            if (tb_username.Text == String.Empty)
+            {                
+                alert.Show("Username missing!", AlertForm.COLOR_WARNING);
+                return;
+            }
+
+            if(tb_password.Text == String.Empty)
+            {
+                alert.Show("Password missing!", AlertForm.COLOR_WARNING);
+                return;
+            }
         }
 
         private void pb_close_Click(object sender, EventArgs e)
