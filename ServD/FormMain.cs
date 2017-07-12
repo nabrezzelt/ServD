@@ -50,7 +50,7 @@ namespace ServD
 
         private void pb_close_Click(object sender, EventArgs e)
         {
-            Close();
+            Environment.Exit(0);
         }
 
         private void pb_max_Click(object sender, EventArgs e)
@@ -154,6 +154,18 @@ namespace ServD
 
             base.WndProc(ref m);
         }
-        #endregion
+
+        private void panel_move_DoubleClick(object sender, EventArgs e)
+        {
+            if (WindowState == FormWindowState.Normal)
+            {
+                WindowState = FormWindowState.Maximized;
+            }
+            else
+            {
+                WindowState = FormWindowState.Normal;
+            }
+        }
+        #endregion        
     }
 }
