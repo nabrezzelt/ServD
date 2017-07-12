@@ -55,6 +55,7 @@
             this.panel_move.Name = "panel_move";
             this.panel_move.Size = new System.Drawing.Size(951, 25);
             this.panel_move.TabIndex = 0;
+            this.panel_move.DoubleClick += new System.EventHandler(this.panel_move_DoubleClick);
             this.panel_move.MouseDown += new System.Windows.Forms.MouseEventHandler(this.panel_move_MouseDown);
             // 
             // lbl_title
